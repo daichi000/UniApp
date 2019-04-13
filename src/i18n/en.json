@@ -7,6 +7,9 @@
     "title": "Feed",
     "noPosts": "No Posts"
   },
+  "TimeTable": {
+    "title": "Time Table"
+  },
   "Notification": {
     "title": "Notifications",
     "noNotifications": "No Notifications",

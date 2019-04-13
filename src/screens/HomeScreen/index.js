@@ -1,14 +1,17 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {
   View,
   ScrollView,
   RefreshControl,
   Share,
   ActivityIndicator,
+  TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { withNavigationFocus } from 'react-navigation';
 import { WebBrowser } from 'expo';
+import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 
 /* from app */
 import FlatList from 'app/src/components/FlatList';
@@ -23,152 +26,63 @@ import styles from './styles';
 @connect(state => ({
   currentScreen: state.screen,
 }))
+
 export default class HomeScreen extends React.Component {
   static navigationOptions = () => ({
-    headerTitle: I18n.t('Home.title'),
+    headerTitle: I18n.t('TimeTable.title'),
   })
 
   constructor(props) {
     super(props);
-
     this.state = {
-      posts: [],
-      fetching: false,
-      loading: false,
+      height: 0
     };
-
-    GA.ScreenHit('Home');
+  }
+ 
+  _showData = (data,row, index) => {
+    console.log(data, row, index);
   }
 
-  async componentDidMount() {
-    await this.getPosts();
-  }
-
-  async componentDidUpdate(prevProps) {
-    const { isFocused } = this.props;
-
-    if (!prevProps.isFocused && isFocused) {
-      GA.ScreenHit("Home")
-    }
-
-    if (!prevProps.isFocused && isFocused && prevProps.currentScreen === 'TakePublish') {
-      await this.getPosts();
-    }
-  }
-
-  getPosts = async (cursor = null) => {
-    this.setState({ fetching: true });
-
-    const response = await firebase.getPosts(cursor);
-
-    if (!response.error) {
-      const { posts } = this.state;
-
-      this.setState({
-        posts: cursor ? posts.concat(response.data) : response.data,
-        cursor: response.cursor,
-      });
-    }
-
-    this.setState({ fetching: false });
-  }
-
-  onUserPress = (item) => {
-    const { navigation } = this.props;
-
-    navigation.push('User', { uid: item.user.uid });
-  }
-
-  onMorePress = (item) => {
-    Share.share({
-      message: item.fileUri,
+  onLayout = (e) => {
+    this.setState({
+      height: e.nativeEvent.layout.height
     });
   }
 
-  onLinkPress = (url, txt) => {
-    const { navigation } = this.props;
-
-    switch (txt[0]) {
-      case '#':
-        navigation.push('Tag', { tag: txt });
-        break;
-      default:
-        WebBrowser.openBrowserAsync(url);
-        break;
-    }
-  }
-
-  onLikePress = async (item) => {
-    GA.EventHit(`[HOME] Post/${item.pid} like button`, 'press');
-
-    const { posts } = this.state;
-
-    const response = await firebase.likePost(item);
-    if (!response.error) {
-      this.setState({
-        posts: posts.map(post => Object.assign({}, post, { liked: (post.pid === item.pid) ? response : post.liked })),
-      });
-    }
-  }
-
-  onRefresh = async () => {
-    this.setState({ cursor: null });
-
-    await this.getPosts();
-  }
-
-  onEndReached = async () => {
-    const { cursor, loading } = this.state;
-
-    if (!loading && cursor) {
-      this.setState({ loading: true });
-      await this.getPosts(cursor);
-      this.setState({ loading: false });
-    }
-  }
-
   render() {
-    const {
-      posts,
-      fetching,
-      loading,
-    } = this.state;
-
-    if (posts.length === 0) {
-      return (
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={[styles.container, styles.empty]}
-        >
-          <Text font="noto-sans-bold" style={styles.emptyText}>{I18n.t('Home.noPosts')}</Text>
-        </ScrollView>
-      );
-    }
+    // const state = this.state;
+    const tableHead = ['','月', '火', '水', '木', '金'];
+    const tableTitle = ['1','2','3','4','5'];
+    const tableData = [
+      ['1', '2', '3', '4', '5'],
+      ['a', 'b', 'c', 'd', 'e'],
+      ['a', 'b', 'c', 'd', 'e'],
+      ['a', 'b', 'c', 'd', 'e'],
+      ['a', 'b', 'c', 'd', 'e'],
+    ];
     return (
-      <View style={styles.container} testID="Home">
-        <FlatList
-          data={posts}
-          keyExtractor={item => item.key}
-          refreshControl={(
-            <RefreshControl
-              refreshing={fetching}
-              onRefresh={this.onRefresh}
-            />
-          )}
-          onEndReachedThreshold={0.1}
-          onEndReached={this.onEndReached}
-          renderItem={({ item, index, viewableItemIndices }) => (
-            <Item
-              {...item}
-              visible={viewableItemIndices.indexOf(index) > -1}
-              onUserPress={this.onUserPress}
-              onMorePress={this.onMorePress}
-              onLikePress={this.onLikePress}
-              onLinkPress={this.onLinkPress}
-            />
-          )}
-          ListFooterComponent={() => (loading ? <View style={styles.loading}><ActivityIndicator size="small" /></View> : null)}
-        />
+        <View style={styles.container} onLayout={this.onLayout}>
+        <Table>
+        <TableWrapper>
+          {/* テーブルヘッダー */}
+          <Row data={tableHead} style={styles.head} textStyle={styles.text} flexArr={[1,2,2,2,2,2]}/>
+            {
+            tableData.map((data, i) => (
+              <TableWrapper key={i} style={styles.row}>
+              {/* テーブル左タイトル */}
+              <Col data={[tableTitle[i]]} style={styles.title} heightArr={[(this.state.height-40)/5]} textStyle={styles.titleText}/>
+                {
+                  data.map((cell, j) => (
+                    <TouchableOpacity key={j} style={j == 0 ? styles.cell: styles.cellFirst} onPress={() => this._showData(cell, i, j)}>
+                      <Cell data={cell} textStyle={styles.text}/>
+                    </TouchableOpacity>
+                  ))
+                }
+              </TableWrapper>
+            ))                     
+          }
+        </TableWrapper>
+      </Table>
       </View>
     );
   }

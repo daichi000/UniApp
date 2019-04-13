@@ -28,16 +28,16 @@
     },
     "primaryColor": "#000",
     "extra": {
-      "ga": "UA-XXXXXX-X",
+      "ga": "UA-138065332-1",
       "backgroundColor": "#fafafa",
       "textColor": "#454545",
       "firebase": {
-        "apiKey": "xxxxxxxxxxxxxx",
-        "authDomain": "xxxxxxxxxxxxxx",
-        "databaseURL": "xxxxxxxxxxxxxx",
-        "projectId": "xxxxxxxxxxxxxx",
-        "storageBucket": "xxxxxxxxxxxxxx",
-        "messagingSenderId": "xxxxxxxxxxxxxx"
+        "apiKey": "AIzaSyDU4H12OdzIxtYfISfbN5ix7_RdEIPx-Bc",
+        "authDomain": "myapp-e7653.firebaseapp.com",
+        "databaseURL": "https://myapp-e7653.firebaseio.com",
+        "projectId": "myapp-e7653",
+        "storageBucket": "myapp-e7653.appspot.com",
+        "messagingSenderId": "579698171717"
       }
     },
     "locales": {
