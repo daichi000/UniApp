@@ -7,6 +7,15 @@
     "title": "フィード",
     "noPosts": "投稿はありません"
   },
+  "TimeTable": {
+    "title": "タイムテーブル"
+  },
+  "Login": {
+    "title": "ログイン"
+  },
+  "Signup": {
+    "title": "サインアップ"
+  },
   "Notification": {
     "title": "通知",
     "noNotifications": "通知はありません",

@@ -10,6 +10,12 @@
   "TimeTable": {
     "title": "Time Table"
   },
+  "Login": {
+    "title": "Login Page"
+  },
+  "Signup": {
+    "title": "Signup Page"
+  },
   "Notification": {
     "title": "Notifications",
     "noNotifications": "No Notifications",
